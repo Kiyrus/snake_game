@@ -1,5 +1,7 @@
 # snake__game
 
+<img src="https://github.com/Kiyrus/snake_game/blob/c2697b83904a2649e737e18d882a4fc24af89491/previev.png">
+
 ## ТРЕБОВАНИЯ К ИНТЕРФЕЙСУ
 
 1. На экране должно быть игровое поле размером 10 на 10 клеточек.
