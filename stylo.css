@@ -31,7 +31,9 @@ body {
 }
 
 .champion_text,
-.score_text {
+.score_text,
+.menu,
+.button {
     color: rgb(255, 166, 58);
     font-weight: bolder;
     font-size: 25px;
@@ -42,6 +44,38 @@ body {
     height: 320px;
     background-color: rgb(250, 183, 101);
     border: 5px solid rgb(255, 166, 58);
-    background-image: url("./img/dot.svg");
     border-radius: 5px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.excel {
+    width: 32px;
+    height: 32px;
+    background-image: url("./img/dot.svg");
+}
+
+.snakeBody {
+    background: url("./img/snake_body.svg");
+}
+
+.snakeHead {
+    background: url("./img/snake_head.svg");
+}
+
+.apple {
+    background: url("./img/apple.svg");
+}
+
+.menu {
+    background-color: rgb(255, 213, 161);
+    border: 5px solid rgb(255, 166, 58);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.button {
+    border: 2px solid rgb(255, 166, 58);
 }

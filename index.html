@@ -11,7 +11,8 @@
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="stylo.css" />
-        <script src="script/main.js" defer></script>
+        <link rel="stylesheet" href="reset.css" />
+        <script src="scripts/main.js" defer></script>
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -23,13 +24,19 @@
         <div class="container">
             <div class="score_body">
                 <div class="score">
-                    <span class="score_text">SCORE:</span>
+                    <span class="score_text" id="inputScore">SCORE:</span>
                 </div>
-                <div class="champion">
-                    <span class="champion_text">BEST:</span>
+                <div class="champion" style="display: flex; flex-direction: column;">
+                    <span class="champion_text" id="bestScore">BEST:</span>
+                    <input type="button" class="button" id="resetBestScoreButton" value="RESET">
                 </div>
             </div>
-            <div class="field"></div>
+            <div id="field"></div>
+            <div class="menu">
+                <!-- <h1>MENU:</h1> -->
+                <span>RESTAT GAME: </span>
+                <input type="button" class="button" id="restartButton" value="RESTART" />
+            </div>
         </div>
     </body>
 </html>
