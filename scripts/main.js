@@ -1,5 +1,60 @@
-//Создаём поле с ячейками
+const excel = document.getElementsByClassName("excel");
 const field = document.getElementById("field");
+const input = document.getElementsByClassName("score_text")[0];
+const bestScoreText = document.getElementById("bestScore");
+const restartButton = document.getElementById("restartButton");
+const resetBestScore = document.getElementById("resetBestScoreButton");
+
+const START_INTERVAL = 300
+const MINUS_INTERVAL_COUNT = 10
+
+let apple;
+let snakeBody
+let coordinates
+let inervalMove
+
+function returnCoordinateElement(x,y) {
+    return document.querySelector(`[posX = "${x}"][posY = "${y}"]`)
+}
+
+function initSnakeBody () {
+    const snakeBody = [
+        returnCoordinateElement(coordinates[0], coordinates[1]),
+        returnCoordinateElement((coordinates[0] - 1), coordinates[1]),
+        returnCoordinateElement((coordinates[0] - 2), coordinates[1]),
+    ]
+    addClassesToSnake(snakeBody)
+    return snakeBody
+}
+function addClassesToSnake(snake){
+    snake.forEach((item, idx)=> {
+        const className = idx === 0 ? "snakeHead" : "snakeBody"
+        item.classList.add(className)
+    })
+}
+
+function addSnakeSection(x, y){
+    snakeBody.unshift(returnCoordinateElement(x, y));
+}
+
+function gameOver() {
+    setTimeout(() => {
+        alert("GameOver!");
+    }, 300);
+    
+    clearInterval(inervalMove);
+}
+
+function startGame() {
+    coordinates = generateSnake();
+    snakeBody = initSnakeBody()
+    createApple();
+    snakeDirection = "right";
+    steps = false;
+    score = 0;
+    input.textContent = `SCORE: ${score}`;
+    inervalMove = setInterval(snakeMove, START_INTERVAL);
+}
 
 for (let i = 1; i < 101; i++) {
     const excel = document.createElement("div");
@@ -8,7 +63,6 @@ for (let i = 1; i < 101; i++) {
     excel.classList.add("excel");
 }
 
-let excel = document.getElementsByClassName("excel");
 let x = 1,
     y = 10;
 
@@ -22,35 +76,11 @@ for (let i = 0; i < excel.length; i++) {
     x++;
 }
 
-//Создаём змею и голову с начальными координатами
 function generateSnake() {
     let posX = Math.round(Math.random() * (10 - 3) + 3);
     let posY = Math.round(Math.random() * (10 - 1) + 1);
     return [posX, posY];
 }
-
-let coordinates = generateSnake();
-
-let snakeBody = [
-    document.querySelector(
-        '[posX = "' + coordinates[0] + '"][posY = "' + coordinates[1] + '"]'
-    ),
-    document.querySelector(
-        '[posX = "' + (coordinates[0] - 1) + '"][posY = "' + coordinates[1] + '"]'
-    ),
-    document.querySelector(
-        '[posX = "' + (coordinates[0] - 2) + '"][posY = "' + coordinates[1] + '"]'
-    ),
-];
-
-snakeBody[0].classList.add("snakeHead");
-
-for (let i = 0; i < snakeBody.length; i++) {
-    snakeBody[i].classList.add("snakeBody");
-}
-
-//Создаём яблоко с координатами отличными от координат змейки
-let apple;
 
 function createApple() {
     function generateApple() {
@@ -62,23 +92,14 @@ function createApple() {
     let appleCoordinates;
     do {
         appleCoordinates = generateApple();
-        apple = document.querySelector(
-            '[posX = "' + appleCoordinates[0] + '"][posY = "' + appleCoordinates[1] + '"]'
-        );
+        apple = returnCoordinateElement(appleCoordinates[0], appleCoordinates[1])
     } while (apple.classList.contains("snakeBody"));
 
     apple.classList.add("apple");
 }
 
-createApple();
+startGame()
 
-let snakeDirection = "right";
-let steps = false;
-
-let input = document.getElementsByClassName("score_text")[0];
-let score = 0;
-input.textContent = `SCORE: ${score}`;
-const bestScoreText = document.getElementById("bestScore");
 bestScoreText.textContent = `BEST SCORE: ${localStorage.getItem("bestScore") || 0}`;
 
 function snakeMove() {
@@ -86,90 +107,61 @@ function snakeMove() {
         snakeBody[0].getAttribute("posX"),
         snakeBody[0].getAttribute("posY"),
     ];
+    
     snakeBody[0].classList.remove("snakeHead");
     snakeBody[snakeBody.length - 1].classList.remove("snakeBody");
     snakeBody.pop();
-
-    if (snakeDirection == "right") {
-        if (snakeCoordinates[0] < 10) {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "' +
-                        (+snakeCoordinates[0] + 1) +
-                        '"][posY = "' +
-                        snakeCoordinates[1] +
-                        '"]'
-                )
-            );
-        } else {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "1"][posY = "' + snakeCoordinates[1] + '"]'
-                )
-            );
-        }
-    } else if (snakeDirection == "left") {
-        if (snakeCoordinates[0] > 1) {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "' +
-                        (+snakeCoordinates[0] - 1) +
-                        '"][posY = "' +
-                        snakeCoordinates[1] +
-                        '"]'
-                )
-            );
-        } else {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "10"][posY = "' + snakeCoordinates[1] + '"]'
-                )
-            );
-        }
-    } else if (snakeDirection == "up") {
-        if (snakeCoordinates[1] < 10) {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "' +
-                        snakeCoordinates[0] +
-                        '"][posY = "' +
-                        (+snakeCoordinates[1] + 1) +
-                        '"]'
-                )
-            );
-        } else {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "' + snakeCoordinates[0] + '"][posY = "1"]'
-                )
-            );
-        }
-    } else if (snakeDirection == "down") {
-        if (snakeCoordinates[1] > 1) {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "' +
-                        snakeCoordinates[0] +
-                        '"][posY = "' +
-                        (snakeCoordinates[1] - 1) +
-                        '"]'
-                )
-            );
-        } else {
-            snakeBody.unshift(
-                document.querySelector(
-                    '[posX = "' + snakeCoordinates[0] + '"][posY = "10"]'
-                )
-            );
-        }
-
-        if (
-            score > localStorage.getItem("bestScore") ||
-            localStorage.getItem("bestScore") === null
-        ) {
-            localStorage.setItem("bestScore", score);
-            bestScoreText.textContent = `BEST SCORE: ${score}`;
-        }
+    
+    switch (snakeDirection) {
+        case "right":
+            if (snakeCoordinates[0] < 10) {
+                addSnakeSection((+snakeCoordinates[0] + 1), snakeCoordinates[1])
+            } else {
+                addSnakeSection(1, snakeCoordinates[1])
+            }
+            break;
+        
+        case "left":
+            if (snakeCoordinates[0] > 1) {
+                addSnakeSection(+snakeCoordinates[0] - 1, snakeCoordinates[1])
+            } else {
+                addSnakeSection(10, snakeCoordinates[1])
+            }
+            break;
+        
+        case "up":
+            if (snakeCoordinates[1] < 10) {
+                addSnakeSection(snakeCoordinates[0], +snakeCoordinates[1] + 1)
+            } else {
+                addSnakeSection(snakeCoordinates[0], 1)
+            }
+            break;
+        
+        case "down":
+            if (snakeCoordinates[1] > 1) {
+                addSnakeSection(snakeCoordinates[0], snakeCoordinates[1] - 1)
+            } else {
+                addSnakeSection(snakeCoordinates[0], 10)
+            }
+            break;
+    }
+    if(
+        (+snakeCoordinates[0] === 10 && +snakeBody[0].getAttribute("posX") === 1) ||
+        (+snakeCoordinates[0] === 1 && +snakeBody[0].getAttribute("posX") === 10)
+    ) {
+        gameOver()
+    }
+    if((+snakeCoordinates[1] === 10 && +snakeBody[0].getAttribute("posY") === 1) ||
+        (+snakeCoordinates[1] === 1 && +snakeBody[0].getAttribute("posY") === 10)
+    ) {
+        gameOver()
+    }
+    if (
+        score > localStorage.getItem("bestScore") ||
+        localStorage.getItem("bestScore") === null
+    ) {
+        localStorage.setItem("bestScore", score);
+        bestScoreText.textContent = `BEST SCORE: ${score}`;
     }
 
     if (
@@ -179,29 +171,25 @@ function snakeMove() {
         apple.classList.remove("apple");
         let x = snakeBody[snakeBody.length - 1].getAttribute("posX");
         let y = snakeBody[snakeBody.length - 1].getAttribute("posY");
-        snakeBody.push(
-            document.querySelector('[posX = "' + x + '"][posY = "' + y + '"]')
-        );
+        snakeBody.push(returnCoordinateElement(x, y));
         createApple();
         score++;
         input.textContent = `SCORE: ${score}`;
-    }
 
-    if (snakeBody[0].classList.contains("snakeBody")) {
-        setTimeout(() => {
-            alert("GameOver!");
-        }, 300);
-
+        let newInterval = START_INTERVAL - score * MINUS_INTERVAL_COUNT > 100 ?
+            START_INTERVAL - score * MINUS_INTERVAL_COUNT :
+            100
         clearInterval(inervalMove);
+        inervalMove = setInterval(snakeMove, newInterval);
     }
-
-    snakeBody[0].classList.add("snakeHead");
-    for (let i = 0; i < snakeBody.length; i++) {
-        snakeBody[i].classList.add("snakeBody");
+    
+    if (snakeBody[0].classList.contains("snakeBody")) {
+        gameOver()
     }
-
+    addClassesToSnake(snakeBody)
+    
     steps = true;
-
+    
     if (
         score > localStorage.getItem("bestScore") ||
         localStorage.getItem("bestScore") === null
@@ -213,7 +201,6 @@ function snakeMove() {
 
 bestScoreText.textContent = `BEST SCORE: ${localStorage.getItem("bestScore") || 0}`;
 
-let inervalMove = setInterval(snakeMove, 300);
 
 window.addEventListener("keydown", function (e) {
     if (steps == true) {
@@ -233,7 +220,6 @@ window.addEventListener("keydown", function (e) {
     }
 });
 
-const restartButton = document.getElementById("restartButton");
 
 restartButton.addEventListener("click", () => {
     clearInterval(inervalMove);
@@ -241,36 +227,10 @@ restartButton.addEventListener("click", () => {
     snakeBody.forEach((snakePart) => {
         snakePart.classList.remove("snakeHead", "snakeBody");
     });
-    snakeBody = [];
-    score = 0;
-    input.textContent = `SCORE: ${score}`;
-    coordinates = generateSnake();
-    snakeBody.push(
-        document.querySelector(
-            '[posX = "' + coordinates[0] + '"][posY = "' + coordinates[1] + '"]'
-        )
-    );
-    snakeBody.push(
-        document.querySelector(
-            '[posX = "' + (coordinates[0] - 1) + '"][posY = "' + coordinates[1] + '"]'
-        )
-    );
-    snakeBody.push(
-        document.querySelector(
-            '[posX = "' + (coordinates[0] - 2) + '"][posY = "' + coordinates[1] + '"]'
-        )
-    );
-    snakeBody[0].classList.add("snakeHead");
-    for (let i = 0; i < snakeBody.length; i++) {
-        snakeBody[i].classList.add("snakeBody");
-    }
-    createApple();
-    snakeDirection = "right";
-    steps = false;
-    inervalMove = setInterval(snakeMove, 300);
+    
+    startGame()
 });
 
-const resetBestScore = document.getElementById("resetBestScoreButton");
 resetBestScore.addEventListener("click", () => {
     localStorage.setItem("bestScore", 0);
     bestScoreText.textContent = `BEST SCORE: ${localStorage.getItem("bestScore") || 0}`;
