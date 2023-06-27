@@ -164,8 +164,8 @@ class Game {
     }
 
     start() {
-        this.apple.reGenerate();
         this.snake.init();
+        this.apple.reGenerate();
         this.score = 0;
         this.scoreText.textContent = `SCORE: ${this.score}`;
         this.bestScoreText.textContent = `BEST SCORE: ${
