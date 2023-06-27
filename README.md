@@ -1,4 +1,4 @@
-# snake__game
+# snake_game
 
 <img src="https://github.com/Kiyrus/snake_game/blob/c2697b83904a2649e737e18d882a4fc24af89491/previev.png">
 
